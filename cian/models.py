@@ -3,10 +3,10 @@ from django.db import models
 
 class Apartment(models.Model):
     rooms = models.CharField('кол-во комнат', max_length=64, null=True)
-    price = models.CharField('цена', max_length=20)
-    address = models.CharField('Адрес', max_length=256)
-    desc = models.TextField('описание', null=True)
-    floor = models.CharField('этаж', max_length=10)
+    price = models.CharField('цена', max_length=20, null=True, blank=True)
+    address = models.CharField('Адрес', max_length=256, null=True, blank=True)
+    desc = models.TextField('описание', null=True, blank=True)
+    floor = models.CharField('этаж', max_length=10, null=True, blank=True)
 
     def __str__(self):
         return self.address
