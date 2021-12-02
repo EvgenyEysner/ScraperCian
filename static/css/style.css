@@ -13,3 +13,11 @@ label {
 .desc {
   margin-top: 15px;
 }
+
+img {
+  max-width: 100%;
+}
+
+.not-visible {
+  display: none;
+}

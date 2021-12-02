@@ -1,5 +1,5 @@
 from django.forms import ModelForm, URLInput
-from .models import Url
+from .models import Url, Apartment
 
 
 class UrlForm(ModelForm):
@@ -13,3 +13,8 @@ class UrlForm(ModelForm):
                 'placeholder': 'ссылка...',
             }),
         }
+
+class ApartmentEditForm(ModelForm):
+    class Meta:
+        model = Apartment
+        fields = '__all__'

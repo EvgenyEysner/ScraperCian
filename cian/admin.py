@@ -1,7 +1,7 @@
 from django.contrib import admin
+from django.utils.html import format_html  # для отображения фото в админке
 
 from .models import Apartment, Image, Url
-from django.utils.html import format_html  # для отображения фото в админке
 
 
 class InlineImage(admin.TabularInline):
@@ -13,11 +13,9 @@ class InlineImage(admin.TabularInline):
     image_tag.short_description = 'фото'
 
 
-
-
 @admin.register(Apartment)
 class AprtmentAdmin(admin.ModelAdmin):
-    list_display = ['address', 'rooms', 'price', 'desc', 'floor']
+    list_display = ['id', 'address', 'rooms', 'price', 'desc', 'floor']
     inlines = [InlineImage, ]
 
 
