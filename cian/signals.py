@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.core.mail import EmailMultiAlternatives
 import time
 from django.core.files import File
-
+from PIL import Image as Img
 from django.shortcuts import render
 from fake_headers import Headers
 from selenium import webdriver
@@ -28,6 +28,13 @@ for i in range(10):
     headers = header.generate()
 
 
+def crop_image(img):
+    image = Img.open(img)
+    im_crop = image.crop((300, 150, 900, 450))
+    im_crop.save(f'{image}.jpg', quality=95)
+    return image
+
+
 def save_data(apartments_list):
     for ap in apartments_list:
 
@@ -42,6 +49,7 @@ def save_data(apartments_list):
             for image in ap['photos']:
                 im = Image()
                 pic = urllib.request.urlretrieve(image)[0]
+                crop_image(pic)
                 im.img.save(image, File(open(pic, 'rb')))
                 im.apartment_id = apartment.pk
                 im.save()

@@ -2,13 +2,13 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-        <div class="col-lg-8 col-md-10 mx-auto"></div>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <hr>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-        </form>
-    </div>
+    <div class="col-lg-8 col-md-10 mx-auto"></div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <hr>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
 </div>
 {% endblock content %}
