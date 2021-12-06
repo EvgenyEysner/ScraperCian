@@ -27,7 +27,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cian',
     'crispy_forms',
+    'easy_thumbnails',
+    'image_cropping',
 ]
+
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+)
+
+IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

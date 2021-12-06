@@ -1,16 +1,15 @@
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import request, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView, TemplateView, CreateView
-from .forms import UrlForm, ApartmentEditForm
+from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView, TemplateView, CreateView, View
+from .forms import UrlForm, ApartmentEditForm, ImageForm
 from .models import Image, Apartment
 from django.shortcuts import render
 from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
-from django.views import View
 from xhtml2pdf import pisa
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -37,11 +36,24 @@ class ApartmentDetailView(DetailView):
     template_name = 'cian/apartment.html'
     context_object_name = 'apartments'
 
+    def get_context_data(self, *args, **kwargs):
+        self.object_list = super().get_queryset()
+        context = super().get_context_data(**kwargs)
+        context['image'] = Image.objects.all()
+        return context
+
 
 class ApartmentDeleteView(DeleteView):
     model = Apartment
     templates = 'cian/apartment_confirm_delete.html'
     success_url = reverse_lazy('apartments:home')
+
+
+class ImageDeleteView(DeleteView):
+    model = Image
+    templates = 'cian/image_confirm_delete.html'
+    success_url = reverse_lazy('apartments:home')
+    templates = 'cian/index.html'
 
 
 class ApartmentUpdateView(UpdateView):
@@ -51,6 +63,24 @@ class ApartmentUpdateView(UpdateView):
     template_name = 'cian/apartment_update.html'
 
 
+class ImageUpdateView(UpdateView):
+    model = Image
+    form_class = ImageForm
+    success_url = reverse_lazy('apartments:home')
+    template_name = 'cian/image_update.html'
+    context_object_name = 'image'
+
+
+    # def add(request, image_id=None):
+    #     image = get_object_or_404(Image, pk=image_id) if image_id else None
+    #     form = ImageForm(instance=image)
+    #     if request.method == "POST":
+    #         form = ImageForm(request.POST, request.FILES, instance=image)
+    #         if form.is_valid():
+    #             image = form.save()
+    #             return HttpResponseRedirect(reverse('image_add', args=(str(image.pk),)))
+    #
+    #     return render(request, 'image/add.html', {'form': form, 'image': image})
 # def apartments_render_pdf_view(request, *args, **kwargs):
 #     pk = kwargs.get('pk')
 #     apartment = get_object_or_404(Apartment, pk=pk)

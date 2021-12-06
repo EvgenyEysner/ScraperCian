@@ -22,6 +22,7 @@ label {
 
 img {
   max-width: 100%;
+  display: block;
 }
 
 .not-visible {

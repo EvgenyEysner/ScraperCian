@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <!-- Required meta tags -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -12,57 +13,68 @@
   <!--<link href="{# % static 'css/cropper.css' %#}" rel="stylesheet" />-->
   <title>PDF Report</title>
   <style>
-  @page {
-  size: a4 portrait;
-  @frame header_frame {
-    /* Static Frame */
-    -pdf-frame-content: header_content;
-    left: 50pt;
-    width: 1024pt;
-    top: 50pt;
-    height: 40pt;
-  }
+    @page {
+      size: a4 portrait;
 
-  @frame content_frame {
-    /* Content Frame */
-    left: 50pt;
-    width: 1024pt;
-    top: 90pt;
-    height: 1200pt;
-  }
-    @font-face {
-    font-family: Verdana;
-    src: url('fonts/verdana.ttf');
-  }
-    html {
-    font-family: Verdana;
-    font-size: 11pt;
-  }
-}
-</style>
+      @frame header_frame {
+        /* Static Frame */
+        -pdf-frame-content: header_content;
+        left: 50pt;
+        width: 1024pt;
+        top: 50pt;
+        height: 40pt;
+      }
+
+      @frame content_frame {
+        /* Content Frame */
+        left: 50pt;
+        width: 1024pt;
+        top: 90pt;
+        height: 1200pt;
+      }
+
+      @font-face {
+        font-family: Verdana;
+        src: url('fonts/verdana.ttf');
+      }
+
+      html {
+        font-family: Verdana;
+        font-size: 11pt;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="album py-5 bg-light">
-  {{apartment}}
-  <hr>
-  <div class="container">
-    <div class="row row-cols-1 row-cols-sm-6 row-cols-md-1 g-3">
-      {% for img in apartment.images.all %}
-      <div class="col">
-        <a href="#" class="pop card shadow-sm">
-          <img src="{{ img.img.path }}" alt="" />
-        </a>
+  <div class="album py-5 bg-light">
+    Ведущий специалист департамента недвижимости:
+    Пирогов Максим Олегович
+    Контактная информация:
+    +7-958-687-86-25
+    +7-926-404-99-97
+    flat.realty@yandex.ru
+    {{apartment}}
+    <hr>
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-6 row-cols-md-1 g-3">
+        {% for img in apartment.images.all %}
+        <div class="col">
+          <a href="#" class="pop card shadow-sm">
+            <img src="{{ img.img.path }}" alt="" />
+          </a>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+      <br>
+      <h5 class="card-title">{{ apartment.address }}</h5>
+      <h5 class="card-title">{{ apartment.rooms }}</h5>
+      <h5 class="card-title">{{ apartment.floor }}</h5>
+      <h5 class="card-title">{{ apartment.price }}</h5>
+      <p class="card-text">{{ apartment.desc }}</p>
+      <br>
     </div>
-    <br>
-    <h5 class="card-title">{{ apartment.address }}</h5>
-    <h5 class="card-title">{{ apartment.rooms }}</h5>
-    <h5 class="card-title">{{ apartment.floor }}</h5>
-    <h5 class="card-title">{{ apartment.price }}</h5>
-    <p class="card-text">{{ apartment.desc }}</p>
-    <br>
   </div>
-</div>
 </body>
+
 </html>

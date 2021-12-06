@@ -18,7 +18,7 @@
     <div class="row row-cols-1 row-cols-sm-6 row-cols-md-2 g-3">
       {% for img in apartment.images.all %}
       <div class="col">
-        <div class="card shadow-sm">
+        <div class="pop card shadow-sm">
           <img src="{{ img.img.url }}" width="100%" height="450" alt="" />
         </div>
       </div>
@@ -30,22 +30,22 @@
     <h5 class="card-title">{{ apartment.price }}</h5>
     <p class="card-text">{{ apartment.desc }}</p>
     <div class="btn-group">
-      <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:update' apartment.id %}">
+      <!--<a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:update' apartment.id %}">
         Редактировать
       </a>
       <a class="btn btn-sm btn-outline-secondary btn-danger" href="{% url 'apartments:delete' apartment.id %}">
         Удалить
+      </a> -->
+      <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:apartment' apartment.pk %}">
+        Детали
       </a>
-      <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:apartment' apartment.id %}">
-        Просмотр
-      </a>
-      <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:create_pdf' apartment.pk %}"
+      <!-- <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:create_pdf' apartment.pk %}"
         target="_blank">
         создать PDF
-      </a>
+      </a> -->
     </div>
   </div>
   {% endfor %}
 </div>
-
+{#% include 'snippets/image_modal.html' %#}
 {% endblock content %}

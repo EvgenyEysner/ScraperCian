@@ -1,4 +1,9 @@
 from django.db import models
+from image_cropping import ImageRatioField, ImageCropField
+
+
+class Profile(models.Model):
+    pass
 
 
 class Apartment(models.Model):
@@ -18,7 +23,7 @@ class Apartment(models.Model):
 
 class Image(models.Model):
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='images', null=True, blank=True)
-    img = models.ImageField(upload_to='images/', null=True, blank=True)
+    img = models.ImageField(upload_to='image/')
 
     class Meta:
         verbose_name = 'фото'
