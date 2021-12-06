@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import IndexView, ApartmentDeleteView, ApartmentDetailView, \
-    ApartmentUpdateView, apartments_render_pdf_view, ImageDeleteView, ImageUpdateView
+    ApartmentUpdateView, ImageDeleteView, ImageUpdateView, apartments_render_pdf_view
 # DownloadPDF, ViewPDF
 
 app_name = 'apartments'

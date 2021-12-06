@@ -1,52 +1,5 @@
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-  <!-- Required meta tags -->
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  {% load static %}
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  <!--<link href="{# % static 'css/cropper.css' %#}" rel="stylesheet" />-->
-  <title>PDF Report</title>
-  <style>
-    @page {
-      size: a4 portrait;
-
-      @frame header_frame {
-        /* Static Frame */
-        -pdf-frame-content: header_content;
-        left: 50pt;
-        width: 1024pt;
-        top: 50pt;
-        height: 40pt;
-      }
-
-      @frame content_frame {
-        /* Content Frame */
-        left: 50pt;
-        width: 1024pt;
-        top: 90pt;
-        height: 1200pt;
-      }
-
-      @font-face {
-        font-family: Verdana;
-        src: url('fonts/verdana.ttf');
-      }
-
-      html {
-        font-family: Verdana;
-        font-size: 11pt;
-      }
-    }
-  </style>
-</head>
-
-<body>
+{% extends 'base.html' %}
+{% block content %}
   <div class="album py-5 bg-light">
     Ведущий специалист департамента недвижимости:
     Пирогов Максим Олегович
@@ -54,15 +7,13 @@
     +7-958-687-86-25
     +7-926-404-99-97
     flat.realty@yandex.ru
-    {{apartment}}
-    <hr>
     <div class="container">
-      <div class="row row-cols-1 row-cols-sm-6 row-cols-md-1 g-3">
-        {% for img in apartment.images.all %}
+      <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 g-1">
+        {% for image in apartment.images.all %}
         <div class="col">
-          <a href="#" class="pop card shadow-sm">
-            <img src="{{ img.img.path }}" alt="" />
-          </a>
+          <div class="card shadow-sm">
+            <img src="{{image.img.path}}" alt="" />
+          </div>
         </div>
         {% endfor %}
       </div>
@@ -75,6 +26,4 @@
       <br>
     </div>
   </div>
-</body>
-
-</html>
+{% endblock content %}

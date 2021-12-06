@@ -14,9 +14,26 @@ from xhtml2pdf import pisa
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
+from django.template import Context
 import os
 import json
 
+# from easy_pdf.views import PDFTemplateView, PDFTemplateResponseMixin
+#
+#
+# class HelloPDFView(PDFTemplateResponseMixin, DetailView):
+#     model = Apartment
+#     template_name = 'cian/report.html'
+#
+#     # base_url = 'file://' + settings.STATIC_ROOT
+#     download_filename = 'hello.pdf'
+#
+#     def get_context_data(self, **kwargs):
+#         return super(HelloPDFView, self).get_context_data(
+#             pagesize='A4',
+#             title='Hi there!',
+#             **kwargs
+#         )
 
 class IndexView(ListView, FormView):
     model = Apartment
@@ -71,35 +88,38 @@ class ImageUpdateView(UpdateView):
     context_object_name = 'image'
 
 
-    # def add(request, image_id=None):
-    #     image = get_object_or_404(Image, pk=image_id) if image_id else None
-    #     form = ImageForm(instance=image)
-    #     if request.method == "POST":
-    #         form = ImageForm(request.POST, request.FILES, instance=image)
-    #         if form.is_valid():
-    #             image = form.save()
-    #             return HttpResponseRedirect(reverse('image_add', args=(str(image.pk),)))
-    #
-    #     return render(request, 'image/add.html', {'form': form, 'image': image})
-# def apartments_render_pdf_view(request, *args, **kwargs):
-#     pk = kwargs.get('pk')
-#     apartment = get_object_or_404(Apartment, pk=pk)
-#     context = {'apartment': apartment}
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="report.pdf"'
-#
-#     buffer = BytesIO()
-#     p = canvas.Canvas(buffer, pagesize=A4)
-#
-#     p.setFont('Veranda', 15, leading=None)
-#     p.setFillColorRGB(0.29296875, 0.453125, 0.609375)
-#     p.drawString(260,800, 'cian/report.html')
-#     p.line(0, 780, 1000, 780)
-#     p.line(0, 778, 1000, 778)
-#     x1 = 20
-#     y1 = 750
-#     for k, v in context.items():
-#         p.setFont('Veranda', 15, leading=None)
+def fetch_pdf_resources(uri, rel):
+    """
+        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+        resources
+        """
+    # use short variable names
+    sUrl = settings.STATIC_URL  # Typically /static/
+    sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+    mUrl = settings.MEDIA_URL  # Typically /static/media/
+    mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
+
+    # convert URIs to absolute system paths
+    if uri.startswith(mUrl):
+        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+    elif uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+    else:
+        return uri  # handle absolute uri (ie: http://some.tld/foo.png)
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+        raise Exception(
+            'media URI must start with %s or %s' % (sUrl, mUrl)
+        )
+    return path
+    # if uri.find(settings.MEDIA_URL) != -1:
+    #     path = os.path.join(settings.MEDIA_ROOT) # uri.replace(settings.MEDIA_URL, ''
+    # elif uri.find(settings.STATIC_URL) != -1:
+    #     path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, ''))
+    # else:
+    #     path = None
+    # return path
 
 
 def apartments_render_pdf_view(request, *args, **kwargs):
@@ -107,19 +127,25 @@ def apartments_render_pdf_view(request, *args, **kwargs):
     apartment = get_object_or_404(Apartment, pk=pk)
 
     template_path = 'cian/report.html'
-    context = {'apartment': apartment}
+    context = { 'apartment': apartment }
     # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
+    # response = HttpResponse(content_type='application/pdf')
+    # response['Content-Disposition'] = 'filename="report.pdf"'
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
+    result = BytesIO()
     # create a pdf
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), result, encoding='UTF-8', link_callback=fetch_pdf_resources) #link_callback=fetch_pdf_resources
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+
+    return None
+    # pisa_status = pisa.CreatePDF(html.encode('UTF-8'), dest=response, encoding='UTF-8', link_callback=fetch_pdf_resources)
     # if error then show some funy view
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
+    # if pisa_status.err:
+    #     return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    # return response
 
 
 #Opens up page as PDF

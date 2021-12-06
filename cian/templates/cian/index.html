@@ -19,30 +19,44 @@
       {% for img in apartment.images.all %}
       <div class="col">
         <div class="pop card shadow-sm">
-          <img src="{{ img.img.url }}" width="100%" height="450" alt="" />
+          <img src="{{ img.img.url }}" width="100%" alt="" />
         </div>
+        <br>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="btn-group">
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:update-image' img.pk %}">
+              Редактировать
+            </a>
+            <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:delete-image' img.pk %}">
+              Удалить
+            </a>
+          </div>
+      </div>
       </div>
       {% endfor %}
     </div>
+    <hr>
     <h5 class="card-title">{{ apartment.address }}</h5>
     <h5 class="card-title">{{ apartment.rooms }}</h5>
     <h5 class="card-title">{{ apartment.floor }}</h5>
     <h5 class="card-title">{{ apartment.price }}</h5>
     <p class="card-text">{{ apartment.desc }}</p>
-    <div class="btn-group">
-      <!--<a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:update' apartment.id %}">
-        Редактировать
-      </a>
-      <a class="btn btn-sm btn-outline-secondary btn-danger" href="{% url 'apartments:delete' apartment.id %}">
-        Удалить
-      </a> -->
-      <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:apartment' apartment.pk %}">
-        Детали
-      </a>
-      <!-- <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:create_pdf' apartment.pk %}"
-        target="_blank">
-        создать PDF
-      </a> -->
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="btn-group">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:update' apartment.id %}">
+          Редактировать
+        </a>
+        <a class="btn btn-sm btn-outline-secondary btn-danger" href="{% url 'apartments:delete' apartment.id %}">
+          Удалить
+        </a>
+        <!-- <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:apartment' apartment.pk %}">
+          Детали
+        </a> -->
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:create_pdf' apartment.pk %}"
+          target="_blank">
+          создать PDF
+        </a>
+      </div>
     </div>
   </div>
   {% endfor %}

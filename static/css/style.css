@@ -1,9 +1,5 @@
 @charset "UTF-8";
 
-html {
-    font-family: veranda;
-}
-
 .container {
   margin-top: 50px;
 }
@@ -20,12 +16,11 @@ label {
   margin-top: 15px;
 }
 
-img {
-  max-width: 100%;
-  display: block;
+.to_crop {
+   width: 100%;
+   display: block;
 }
 
 .not-visible {
   display: none;
 }
-

@@ -13,9 +13,15 @@ SECRET_KEY = 'django-insecure-z649srbr&p5j4evkfr-i%c7v&b1lq@!%rq_pxl79k9f8kwq7bo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+STATICFILES_FINDERS = (
 
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+)
 # Application definition
 
 INSTALLED_APPS = [
@@ -27,15 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cian',
     'crispy_forms',
-    'easy_thumbnails',
-    'image_cropping',
 ]
 
-THUMBNAIL_PROCESSORS = (
-    'image_cropping.thumbnail_processors.crop_corners',
-)
-
-IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -113,11 +112,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# STATICFILES_DIRS = (
+#      os.path.join(BASE_DIR, 'assets'),
+#  )
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

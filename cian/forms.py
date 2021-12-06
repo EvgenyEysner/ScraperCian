@@ -43,7 +43,7 @@ class ImageForm(ModelForm):
 
         image = Img.open(photo.img)
         cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((500, 500), Img.ANTIALIAS)
+        resized_image = cropped_image.resize((300, 300), Img.ANTIALIAS)
         resized_image.save(photo.img.path)
 
         return resized_image

@@ -1,29 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-{#% if image %#}
   <div class="col">
     <a href="#" class="pop card shadow-sm">
-      <img class="" src="{{ image.img.url }}" width="100%" height="800" alt="" />
+      <img class="to_crop" src="{{ image.img.url }}" alt="" />
     </a>
-    <br>
-    <div class="d-flex justify-content-between align-items-center">
+    <!-- <div class="d-flex justify-content-between align-items-center">
       <div class="btn-group">
-        <!-- <a class="btn btn-sm btn-outline-secondary" href="{#% url 'apartments:update-image' image.pk %#}">
+        <a class="btn btn-sm btn-outline-secondary" href="{#% url 'apartments:update-image' image.pk %#}">
           Редактировать
-        </a> -->
+        </a>
         <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'apartments:delete-image' image.pk %}">
           Удалить
         </a>
       </div>
-    </div>
+    </div> -->
   </div>
-{#% endif %#}
 <!-- MODAL TO CROP THE IMAGE -->
 <div class="modal fade" id="imagemodal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Crop the photo</h4>
+        <h4 class="modal-title"></h4>
       </div>
       <form method="post" enctype="multipart/form-data" id="formEdit" action="{% url 'apartments:update-image' image.pk %}">
         {% csrf_token %}
@@ -41,8 +38,7 @@
             <span class="glyphicon glyphicon-zoom-out"></span>
           </button>
         </div>
-        <button type="submit" class="btn btn-primary js-crop-and-upload"
-          href="{#% url 'apartments:update-image' image.pk %#}">Crop and upload</button>
+        <button type="submit" class="btn btn-primary js-crop-and-upload">Сохранить</button>
       </div>
     </div>
   </div>
@@ -91,7 +87,7 @@
     });
 
     /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
-    $(".js-crop-and-upload").click(function () { debugger;
+    $(".js-crop-and-upload").click(function () {
       var cropData = $image.cropper("getData");
       $("#id_x").val(cropData["x"]);
       $("#id_y").val(cropData["y"]);
