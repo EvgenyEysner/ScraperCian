@@ -23,6 +23,4 @@ class AprtmentAdmin(admin.ModelAdmin):
 class UrlAdmin(admin.ModelAdmin):
     list_display = ['created', 'url']
 
-# admin.site.register(Image, ImageAdmin)
-
 

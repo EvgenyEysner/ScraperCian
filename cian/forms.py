@@ -1,8 +1,6 @@
 from django.forms import ModelForm, URLInput, HiddenInput, FloatField
 from .models import Url, Apartment, Image
-from django.core.files import File
 from PIL import Image as Img
-import os
 
 
 class UrlForm(ModelForm):

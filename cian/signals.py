@@ -1,10 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.mail import EmailMultiAlternatives
 import time
 from django.core.files import File
 from PIL import Image as Img
-from django.shortcuts import render
 from fake_headers import Headers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -28,13 +26,6 @@ for i in range(10):
     headers = header.generate()
 
 
-def crop_image(img):
-    image = Img.open(img)
-    im_crop = image.crop((300, 150, 900, 450))
-    im_crop.save(f'{image}.jpg', quality=95)
-    return image
-
-
 def save_data(apartments_list):
     for ap in apartments_list:
 
@@ -49,7 +40,6 @@ def save_data(apartments_list):
             for image in ap['photos']:
                 im = Image()
                 pic = urllib.request.urlretrieve(image)[0]
-                crop_image(pic)
                 im.img.save(image, File(open(pic, 'rb')))
                 im.apartment_id = apartment.pk
                 im.save()
@@ -86,9 +76,7 @@ def saved_url(instance, created, **kwargs):
             except:
                 price = None
             try:
-                address = driver.find_element(By.XPATH,
-                                              '//section/div/div[1]/div[2]/span[@itemprop="name"]').get_attribute(
-                    'content')
+                address = driver.find_element(By.XPATH, '//div[3][@data-name="Geo"]//following-sibling::span').get_attribute('content')
             except:
                 address = None
             try:

@@ -1,22 +1,14 @@
 from django.conf import settings
-from django.contrib.staticfiles import finders
-from django.http import request, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView, TemplateView, CreateView, View
 from .forms import UrlForm, ApartmentEditForm, ImageForm
 from .models import Image, Apartment
-from django.shortcuts import render
 from io import BytesIO
-from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
-from django.template import Context
 import os
-import json
 
 # from easy_pdf.views import PDFTemplateView, PDFTemplateResponseMixin
 #
