@@ -11,6 +11,7 @@ class Apartment(models.Model):
     address = models.CharField('Адрес', max_length=256, null=True, blank=True)
     desc = models.TextField('описание', null=True, blank=True)
     floor = models.CharField('этаж', max_length=10, null=True, blank=True)
+    commission = models.CharField('коммисия', max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.address

@@ -10,22 +10,6 @@ from xhtml2pdf import pisa
 from django.http import HttpResponse
 import os
 
-# from easy_pdf.views import PDFTemplateView, PDFTemplateResponseMixin
-#
-#
-# class HelloPDFView(PDFTemplateResponseMixin, DetailView):
-#     model = Apartment
-#     template_name = 'cian/report.html'
-#
-#     # base_url = 'file://' + settings.STATIC_ROOT
-#     download_filename = 'hello.pdf'
-#
-#     def get_context_data(self, **kwargs):
-#         return super(HelloPDFView, self).get_context_data(
-#             pagesize='A4',
-#             title='Hi there!',
-#             **kwargs
-#         )
 
 class IndexView(ListView, FormView):
     model = Apartment
@@ -105,13 +89,7 @@ def fetch_pdf_resources(uri, rel):
             'media URI must start with %s or %s' % (sUrl, mUrl)
         )
     return path
-    # if uri.find(settings.MEDIA_URL) != -1:
-    #     path = os.path.join(settings.MEDIA_ROOT) # uri.replace(settings.MEDIA_URL, ''
-    # elif uri.find(settings.STATIC_URL) != -1:
-    #     path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, ''))
-    # else:
-    #     path = None
-    # return path
+
 
 
 def apartments_render_pdf_view(request, *args, **kwargs):
@@ -144,14 +122,14 @@ def apartments_render_pdf_view(request, *args, **kwargs):
 # class ViewPDF(View):
 #
 #     def get(self, request, *args, **kwargs):
-#         pdf = apartments_render_pdf_view('cian/report.html')
+#         pdf = apartments_render_pdf_view('cian/report_Alt.html')
 #         return HttpResponse(pdf, content_type='application/pdf')
 #
 #
 # # Automaticly downloads to PDF file
 # class DownloadPDF(View):
 #     def get(self, request, *args, **kwargs):
-#         pdf = apartments_render_pdf_view('cian/report.html')
+#         pdf = apartments_render_pdf_view('cian/report_Alt.html')
 #
 #         response = HttpResponse(pdf, content_type='application/pdf')
 #         filename = "apartment_%s.pdf" % ("12341231")

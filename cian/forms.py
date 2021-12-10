@@ -1,4 +1,4 @@
-from django.forms import ModelForm, URLInput, HiddenInput, FloatField
+from django.forms import ModelForm, URLInput, HiddenInput, FloatField, FileInput
 from .models import Url, Apartment, Image
 from PIL import Image as Img
 
@@ -31,6 +31,12 @@ class ImageForm(ModelForm):
         model = Image
         fields = ('img', 'x', 'y', 'width', 'height', )
 
+        widgets = {
+            FileInput(attrs={
+                'class': 'form-control',
+            }),
+        }
+
     def save(self):
         photo = super(ImageForm, self).save()
 
@@ -41,7 +47,7 @@ class ImageForm(ModelForm):
 
         image = Img.open(photo.img)
         cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((300, 300), Img.ANTIALIAS)
+        resized_image = cropped_image.resize((400, 400), Img.ANTIALIAS)
         resized_image.save(photo.img.path)
 
         return resized_image

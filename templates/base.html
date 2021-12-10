@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <!-- Required meta tags -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -10,40 +11,15 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <link href="{% static 'css/cropper.css' %}" rel="stylesheet" />
   <title>Циан парсер</title>
-  <style>
-    @page {
-        size: letter;
-        margin: 1cm;
-
-        @frame footer_frame {
-            /* Another static Frame */
-            -pdf-frame-content: footer_content;
-            left: 25pt;
-            width: 512pt;
-            top: 50pt;
-            height: 692px;
-        }
-
-        table {
-            -pdf-keep-with-next: true;
-        }
-        @font-face {
-          font-family: "Alice-Regular";
-          src: url("/static/fonts/Alice-Regular.ttf") format("truetype");
-      }
-    }
-    body {
-        font-family: "Alice-Regular";
-        font-size: 15px;
-       }
-</style>
+  {% block style %}{% endblock style %}
 </head>
+
 <body>
   {% block content %} {% endblock content %}
   <script src="{% static 'js/jquery.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/cropper.js' %}"></script>
-{% block javascript %} {% endblock %}
+  {% block javascript %} {% endblock %}
 </body>
 
 </html>
