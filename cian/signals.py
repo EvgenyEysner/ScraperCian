@@ -1,12 +1,9 @@
-from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import time
 from django.core.files import File
-from PIL import Image as Img
 from fake_headers import Headers
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
@@ -63,80 +60,80 @@ def make_request(url):
 def saved_url(instance, created, **kwargs):
     if created:
         url = instance.url
-        soup = make_request(url)
-        for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
-            url = link.find('a').get('href')
+        # soup = make_request(url)
+        # for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
+        #     url = link.find('a').get('href')
 
-            response = requests.get(url)
-            html = response.text
-            if start_json_template in html:
-                start = html.index(start_json_template) + len(start_json_template)
-                end = html.index('</script>', start)
-                json_raw = html[start:end].strip()[:-1]
-                js = json.loads(json_raw)
-                for item in js:
-                    apartments = []
+        response = requests.get(url)
+        html = response.text
+        if start_json_template in html:
+            start = html.index(start_json_template) + len(start_json_template)
+            end = html.index('</script>', start)
+            json_raw = html[start:end].strip()[:-1]
+            js = json.loads(json_raw)
+            for item in js:
+                apartments = []
 
-                    if item['key'] == 'defaultState':
-                        try:
-                            price = item['value']['offerData']['offer']['bargainTerms']['price']
-                        except:
-                            price = None
-                        try:
-                            floor = item['value']['offerData']['offer']['floorNumber']
-                        except:
-                            floor = None
-                        try:
-                            desc = item['value']['offerData']['offer']['description']
-                        except:
-                            desc = None
-                        try:
-                            region = item['value']['offerData']['offer']['geo']['address'][0]['fullName']
-                        except:
-                            region = None
-                        try:
-                            town = item['value']['offerData']['offer']['geo']['address'][1]['fullName']
-                        except:
-                            town = None
-                        try:
-                            street = item['value']['offerData']['offer']['geo']['address'][2]['fullName']
-                        except:
-                            street = None
-                        try:
-                            house_number = item['value']['offerData']['offer']['geo']['address'][3]['fullName']
-                        except:
-                            house_number = None
-                        try:
-                            address = region + ', ' + town + ', ' + street + ' ' + house_number
-                        except:
-                            address = None
-                        try:
-                            rooms = item['value']['offerData']['offer']['roomsCount']
-                        except:
-                            rooms = None
-                        try:
-                            commission = item['value']['offerData']['offer']['bargainTerms']['clientFee']   #['agentFee']
-                        except:
-                            commission = None
-                        try:
-                            photos = []
+                if item['key'] == 'defaultState':
+                    try:
+                        price = item['value']['offerData']['offer']['bargainTerms']['price']
+                    except:
+                        price = None
+                    try:
+                        floor = item['value']['offerData']['offer']['floorNumber']
+                    except:
+                        floor = None
+                    try:
+                        desc = item['value']['offerData']['offer']['description']
+                    except:
+                        desc = None
+                    try:
+                        region = item['value']['offerData']['offer']['geo']['address'][0]['fullName']
+                    except:
+                        region = None
+                    try:
+                        town = item['value']['offerData']['offer']['geo']['address'][1]['fullName']
+                    except:
+                        town = None
+                    try:
+                        street = item['value']['offerData']['offer']['geo']['address'][2]['fullName']
+                    except:
+                        street = None
+                    try:
+                        house_number = item['value']['offerData']['offer']['geo']['address'][3]['fullName']
+                    except:
+                        house_number = None
+                    try:
+                        address = region + ', ' + town + ', ' + street + ' ' + house_number
+                    except:
+                        address = None
+                    try:
+                        rooms = item['value']['offerData']['offer']['roomsCount']
+                    except:
+                        rooms = None
+                    try:
+                        commission = item['value']['offerData']['offer']['bargainTerms']['clientFee']   #['agentFee']
+                    except:
+                        commission = None
+                    try:
+                        photos = []
 
-                            for photo in item['value']['offerData']['offer']['photos']:
-                                photos.append(photo['fullUrl'])
-                        except:
-                            photos = None
-                        apartments.append(
-                            {
-                                'rooms': rooms,
-                                'price': price,
-                                'address': address,
-                                'desc': desc,
-                                'floor': floor,
-                                'photos': photos,
-                                'commission': commission,
-                            }
-                        )
-                        save_data(apartments)
+                        for photo in item['value']['offerData']['offer']['photos']:
+                            photos.append(photo['fullUrl'])
+                    except:
+                        photos = None
+                    apartments.append(
+                        {
+                            'rooms': rooms,
+                            'price': price,
+                            'address': address,
+                            'desc': desc,
+                            'floor': floor,
+                            'photos': photos,
+                            'commission': commission,
+                        }
+                    )
+                    save_data(apartments)
 
             # driver.get(url)
             #

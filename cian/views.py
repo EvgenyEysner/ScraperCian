@@ -1,14 +1,16 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView, TemplateView, CreateView, View
+from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView
+from django.http import HttpResponse
+from django.template.loader import get_template
+
+from io import BytesIO
+from xhtml2pdf import pisa
+import os
+
 from .forms import UrlForm, ApartmentEditForm, ImageForm
 from .models import Image, Apartment
-from io import BytesIO
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from django.http import HttpResponse
-import os
 
 
 class IndexView(ListView, FormView):
@@ -68,7 +70,7 @@ def fetch_pdf_resources(uri, rel):
     """
         Convert HTML URIs to absolute system paths so xhtml2pdf can access those
         resources
-        """
+    """
     # use short variable names
     sUrl = settings.STATIC_URL  # Typically /static/
     sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
@@ -98,9 +100,6 @@ def apartments_render_pdf_view(request, *args, **kwargs):
 
     template_path = 'cian/report.html'
     context = { 'apartment': apartment }
-    # Create a Django response object, and specify content_type as pdf
-    # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'filename="report.pdf"'
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
@@ -111,11 +110,6 @@ def apartments_render_pdf_view(request, *args, **kwargs):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
 
     return None
-    # pisa_status = pisa.CreatePDF(html.encode('UTF-8'), dest=response, encoding='UTF-8', link_callback=fetch_pdf_resources)
-    # if error then show some funy view
-    # if pisa_status.err:
-    #     return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    # return response
 
 
 #Opens up page as PDF

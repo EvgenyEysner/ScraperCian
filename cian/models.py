@@ -1,10 +1,6 @@
 from django.db import models
 
 
-class Profile(models.Model):
-    pass
-
-
 class Apartment(models.Model):
     rooms = models.CharField('кол-во комнат', max_length=64, null=True)
     price = models.CharField('цена', max_length=20, null=True, blank=True)
