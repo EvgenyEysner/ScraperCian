@@ -37,6 +37,7 @@ class ImageForm(ModelForm):
             }),
         }
 
+    # needed to crop a photo, override the method save
     def save(self):
         photo = super(ImageForm, self).save()
 
@@ -45,9 +46,9 @@ class ImageForm(ModelForm):
         w = self.cleaned_data.get('width')
         h = self.cleaned_data.get('height')
 
-        image = Img.open(photo.img)
-        cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((400, 400), Img.ANTIALIAS)
-        resized_image.save(photo.img.path)
+        image = Img.open(photo.img) # Pillow
+        cropped_image = image.crop((x, y, w+x, h+y)) # crop the image
+        resized_image = cropped_image.resize((400, 400), Img.ANTIALIAS) # resize cropped image
+        resized_image.save(photo.img.path) # save resized image
 
         return resized_image

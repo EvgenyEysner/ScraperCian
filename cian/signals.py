@@ -2,19 +2,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files import File
 from fake_headers import Headers
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
 from .models import Url, Apartment, Image
 import json
-
-# options = webdriver.FirefoxOptions()
-# options.add_argument('--ignore-certificate-errors')
-# options.add_argument('--headless')
-# options.add_argument('--incognito')
-# driver = webdriver.Firefox(executable_path='/home/evgeny/PycharmProjects/Cian/geckodriver', options=options)
 
 start_json_template = "window._cianConfig['frontend-offer-card'] = "
 
@@ -27,7 +19,7 @@ for i in range(10):
     headers = header.generate()
 
 
-def save_data(apartments_list):
+def save_data(apartments_list):  # save the scraped data to the database
     for ap in apartments_list:
         try:
             apartment = Apartment.objects.create(
@@ -36,11 +28,13 @@ def save_data(apartments_list):
                 address=ap['address'],
                 desc=ap['desc'],
                 floor=ap['floor'],
+                commission=ap['commission'],
             )
             for image in ap['photos']:
                 im = Image()
-                pic = urllib.request.urlretrieve(image)[0]
-                im.img.save(image, File(open(pic, 'rb')))
+                pic = urllib.request.urlretrieve(image)[0] # download images
+
+                im.img.save(image, File(open(pic, 'rb'))) # save images to media directory
                 im.apartment_id = apartment.pk
                 im.save()
 
@@ -49,6 +43,7 @@ def save_data(apartments_list):
             break
 
 
+# make request
 def make_request(url):
     req = requests.get(url, headers=headers, timeout=3, stream=True)
     src = req.text
@@ -66,7 +61,7 @@ def saved_url(instance, created, **kwargs):
 
         response = requests.get(url)
         html = response.text
-        if start_json_template in html:
+        if start_json_template in html: # get json from website
             start = html.index(start_json_template) + len(start_json_template)
             end = html.index('</script>', start)
             json_raw = html[start:end].strip()[:-1]
@@ -100,11 +95,12 @@ def saved_url(instance, created, **kwargs):
                     except:
                         street = None
                     try:
-                        house_number = item['value']['offerData']['offer']['geo']['address'][3]['fullName']
+                        house_number = item['value']['offerData']['offer']['geo']['address'][-1]['fullName']
                     except:
                         house_number = None
                     try:
                         address = region + ', ' + town + ', ' + street + ' ' + house_number
+                        # address = item['value']['offerData']['offer']['geo']['address']
                     except:
                         address = None
                     try:
@@ -112,7 +108,7 @@ def saved_url(instance, created, **kwargs):
                     except:
                         rooms = None
                     try:
-                        commission = item['value']['offerData']['offer']['bargainTerms']['clientFee']   #['agentFee']
+                        commission = item['value']['offerData']['offer']['bargainTerms']['agentFee']
                     except:
                         commission = None
                     try:
@@ -134,52 +130,5 @@ def saved_url(instance, created, **kwargs):
                         }
                     )
                     save_data(apartments)
-
-            # driver.get(url)
-            #
-            # try:
-            #     rooms = driver.find_element(By.XPATH, '//div[1][@data-name="OfferTitle"]').text
-            # except:
-            #     rooms = None
-            # try:
-            #     price = driver.find_element(By.XPATH, '//div[1]/div/span/span[1][@itemprop="price"]').text
-            # except:
-            #     price = None
-            # try:
-            #     address = driver.find_element(By.XPATH, '//div[1]/div[3][@data-name="Geo"]').text.replace('На карте', '')
-            # except:
-            #     address = None
-            # try:
-            #     desc = driver.find_element(By.XPATH, '//div/span/p[@itemprop="description"]').text
-            # except:
-            #     desc = None
-            # try:
-            #     floor = driver.find_element(By.XPATH, '//div/div[4]/div[1][@data-testid="object-summary-description-value"]').text#
-            # except:
-            #     floor = None
-            # try:
-            #     # photos = [img.get_attribute('src') for img in driver.find_elements(By.CLASS_NAME, 'fotorama__img')]
-            #     image_box = driver.find_elements(By.CLASS_NAME, 'fotorama__stage__frame fotorama__loaded fotorama__loaded--img')
-            #
-            #     photos = [img.get_attribute('src') for img in driver]
-            # except:
-            #     photos = None
-            # try:
-            #     commission = driver.find_element(By.XPATH, '//*[contains(text(),"Залог")]').text
-            # except:
-            #     commission = None
-            # apartments.append(
-            #     {
-            #         'rooms': rooms,
-            #         'price': price,
-            #         'address': address,
-            #         'desc': desc,
-            #         'floor': floor,
-            #         'photos': photos,
-            #         'commission': commission,
-            #     }
-            # )
-            # save_data(apartments)
-
 
 

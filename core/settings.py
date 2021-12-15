@@ -15,15 +15,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-STATICFILES_FINDERS = (
-
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
-)
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,11 +123,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'cian/static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-
+# connected to work simultaneously with STATICFILES_DIRS and STATIC_ROOT. STATIC_ROOT needed for XHTML2PDF
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

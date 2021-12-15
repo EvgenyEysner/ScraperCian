@@ -7,7 +7,7 @@ class CianConfig(AppConfig):
 
     verbose_name = 'Панель администратора'
 
-    # нам надо переопределить метод ready,
-    # чтобы при готовности нашего приложения импортировался модуль со всеми функциями обработчиками
+    # override the method ready,
+    # so that when our application is ready, a module with all handler functions is imported
     def ready(self):
         import cian.signals
