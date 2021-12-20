@@ -18,6 +18,9 @@ header = Headers(
 for i in range(10):
     headers = header.generate()
 
+proxy = {
+    'https': 'http://138.59.206.183:9915'
+}
 
 def save_data(apartments_list):  # save the scraped data to the database
     for ap in apartments_list:
@@ -44,11 +47,11 @@ def save_data(apartments_list):  # save the scraped data to the database
 
 
 # make request
-def make_request(url):
-    req = requests.get(url, headers=headers, timeout=3, stream=True)
-    src = req.text
-    soup = BeautifulSoup(src, 'lxml')
-    return soup
+# def make_request(url):
+#     req = requests.get(url, headers=headers, timeout=3, stream=True)
+#     src = req.text
+#     soup = BeautifulSoup(src, 'lxml')
+#     return soup
 
 
 @receiver(post_save, sender=Url)
@@ -59,7 +62,7 @@ def saved_url(instance, created, **kwargs):
         # for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
         #     url = link.find('a').get('href')
 
-        response = requests.get(url)
+        response = requests.get(url, headers=headers, proxies=proxy)
         html = response.text
         if start_json_template in html: # get json from website
             start = html.index(start_json_template) + len(start_json_template)
@@ -91,7 +94,7 @@ def saved_url(instance, created, **kwargs):
                     except:
                         town = None
                     try:
-                        street = item['value']['offerData']['offer']['geo']['address'][2]['fullName']
+                        street = item['value']['offerData']['offer']['geo']['address'][-2]['fullName']
                     except:
                         street = None
                     try:
