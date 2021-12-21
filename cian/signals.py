@@ -3,10 +3,14 @@ from django.dispatch import receiver
 from django.core.files import File
 from fake_headers import Headers
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 import urllib.request
 from .models import Url, Apartment, Image
 import json
+import time
+import random
 
 start_json_template = "window._cianConfig['frontend-offer-card'] = "
 
@@ -19,7 +23,8 @@ for i in range(10):
     headers = header.generate()
 
 proxy = {
-    'https': 'http://138.59.206.183:9915'
+    'https': 'http://138.59.206.183:9915',
+    'http': 'http://138.59.206.183:9915'
 }
 
 def save_data(apartments_list):  # save the scraped data to the database
@@ -61,14 +66,21 @@ def saved_url(instance, created, **kwargs):
         # soup = make_request(url)
         # for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
         #     url = link.find('a').get('href')
+        s = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        s.mount('http://', adapter)
+        s.mount('https://', adapter)
 
-        response = requests.get(url, headers=headers, proxies=proxy)
+        response = s.get(url, headers=headers, proxies={'http': 'http://138.59.206.183:9915'}, timeout=random.randint(1, 3))
         html = response.text
         if start_json_template in html: # get json from website
             start = html.index(start_json_template) + len(start_json_template)
             end = html.index('</script>', start)
             json_raw = html[start:end].strip()[:-1]
             js = json.loads(json_raw)
+            time.sleep(random.randint(1, 5))
+
             for item in js:
                 apartments = []
 
@@ -121,6 +133,7 @@ def saved_url(instance, created, **kwargs):
                             photos.append(photo['fullUrl'])
                     except:
                         photos = None
+                    time.sleep(random.randint(1,3))
                     apartments.append(
                         {
                             'rooms': rooms,
