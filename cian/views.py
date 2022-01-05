@@ -1,16 +1,17 @@
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import UpdateView, FormView, DeleteView, ListView, DetailView
-from django.http import HttpResponse
-from django.template.loader import get_template
-
-from io import BytesIO
-from xhtml2pdf import pisa
 import os
+from io import BytesIO
 
-from .forms import UrlForm, ApartmentEditForm, ImageForm
-from .models import Image, Apartment
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
+from django.urls import reverse_lazy
+from django.views.generic import (DeleteView, DetailView, FormView, ListView,
+                                  UpdateView)
+from xhtml2pdf import pisa
+
+from .forms import ApartmentEditForm, ImageForm, UrlForm
+from .models import Apartment, Image
 
 
 class IndexView(ListView, FormView):
@@ -68,8 +69,8 @@ class ImageUpdateView(UpdateView):
 
 def fetch_pdf_resources(uri, rel):
     """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-        resources
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources
     """
     # use short variable names
     sUrl = settings.STATIC_URL  # Typically /static/
@@ -93,27 +94,27 @@ def fetch_pdf_resources(uri, rel):
     return path
 
 
-
 def apartments_render_pdf_view(request, *args, **kwargs):
     pk = kwargs.get('pk')
     apartment = get_object_or_404(Apartment, pk=pk)
 
     template_path = 'cian/report.html'
-    context = { 'apartment': apartment }
+    context = {'apartment': apartment}
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
     result = BytesIO()
     # create a pdf
-    pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), result, encoding='UTF-8', link_callback=fetch_pdf_resources)
-    apartment.delete() # remove object after file creation
+    pdf = pisa.pisaDocument(BytesIO(html.encode(
+        'UTF-8')), result, encoding='UTF-8', link_callback=fetch_pdf_resources)
+    # apartment.delete() # remove object after file creation
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
 
     return None
 
 
-#Opens up page as PDF
+# Opens up page as PDF
 # class ViewPDF(View):
 #
 #     def get(self, request, *args, **kwargs):

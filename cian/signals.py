@@ -41,7 +41,6 @@ def save_data(apartments_list):  # save the scraped data to the database
             for image in ap['photos']:
                 im = Image()
                 pic = urllib.request.urlretrieve(image)[0] # download images
-
                 im.img.save(image, File(open(pic, 'rb'))) # save images to media directory
                 im.apartment_id = apartment.pk
                 im.save()

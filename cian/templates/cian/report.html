@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-{% load static %}
 <head>
   <!-- Required meta tags -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -12,121 +11,141 @@
   <link href="{% static 'css/cropper.css' %}" rel="stylesheet" />
   <title>{{ apartment.address }}</title>
   {% block style %}{% endblock style %}
-  <style>
-    @page {
-      size: a4 portrait;
-      margin: 1cm;
-
+    <style type="text/css">
+      
+      @page {
+        size: a4 portrait;
+        /* @frame header_frame { 
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 40pt;
+        } */
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 50pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+        }
+    }
+      
       @font-face {
         font-family: "Arial";
         src: url("/static/fonts/ARIAL.TTF") format("truetype");
       }
-
-      @frame footer_frame {
-        /* Another static Frame */
-        -pdf-frame-content: footer_content;
-        left: 50pt;
-        width: 512pt;
-        top: 772pt;
-        height: 20pt;
-      }
-    }
-
     .table,
-    td,
-    th {
-      border-bottom: 1px solid #ddd;
-      border-top: 1px solid #ddd;
-      text-align: left;
-    }
+      td,
+      th {
+        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+        text-align: left;
+      }
 
     .table {
-      /* border-collapse: collapse; */
-      width: 100%;
-    }
+        width: 100%;
+      }
 
     .table th,
-    td {
-      padding: 2px;
-      text-align: left;
-    }
+      td {
+        padding: 5px;
+        text-align: left;
+      }
 
-    .list-group-item h3 {
+    .td {
+        word-break: inherit;
+      }
+
+    h3 {
       font-size: 1.2em;
       text-align: left;
     }
 
-    .list-group-item h4 {
+    h4 {
       font-size: 1em;
       text-align: left;
     }
 
-    .list-group-item h6 {
+    h6 {
       font-size: 1em;
       text-align: left;
       white-space: normal;
     }
+      
+    p {
+        font-size: 1em;
+      }
 
     .table1 {
-      width: 100%;
-      max-width: 100%;
-      background-color: #fff;
-      border: none;
-    }
-
-    .table1 p {
-      text-align: left;
-      font-size: 1em;
-    }
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 5px;
+        background-color: #fff;
+        text-align: center;
+      }
 
     .table1 td {
-      border: none;
-    }
+        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+      }
 
     body {
       font-family: "Arial";
       font-size: 15px;
     }
-  </style>
-</head>
-<html>
+    .image {
+      display: block;
+      position: relative;
 
-<body>
-  {{ apartment.address }}
-  <hr>
-  <div class="container">
-    {{ apartment.desc }}
-    <table class="table1">
-      <td>
-        <div class="list-group">
-          <p>Адрес: {{ apartment.address }}</p>
-          <p>Комнат: {{ apartment.rooms }}</p>
-          <p>Этаж: {{ apartment.floor }}</p>
-          <p>Цена: {{ apartment.price }}</p>
-          <p>Комиссия: {{ apartment.commission }}</p>
-        </div>
-      </td>
-    </table>
-    {% for image in apartment.images.all %}
-    <img src="{{image.img.path}}" width="350" style="float:left" />
-    <table class="table-image">
-      {% endfor %}
-    </table>
-    </table>
-    <table class="table">
-      <td><img src="{% static 'images/photo.jpg' %}" width="250" alt="logo" /></td>
-      <td>
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ apartment.address }}</h1>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Адрес</th>
+              <th>Комнат</th>
+              <th>Этаж</th>
+              <th>Цена</th>
+              <th>Комиссия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ apartment.address }}</td>
+              <td>{{ apartment.rooms }}</td>
+              <td>{{ apartment.floor }}</td>
+              <td>{{ apartment.price }}</td>
+              <td>{{ apartment.commission }}</td>
+            </tr>
+          </tbody>
+        </table>
         <br>
-        <h4>Ведущий специалист департамента недвижимости Максим:</h4>
-        <h4>Контактная информация:</h4>
-        <h6>+7-958-687-86-25</h6>
-        <h6>+7-926-404-99-97</h6>
-        <h6><small class="text-muted">flat.realty@yandex.ru</small></h6>
-      </td>
-    </table>
-    <div id="footer_content">
-      <pdf:pagenumber>
+        <h6>{{ apartment.desc }}</h6>
+        {% for image in apartment.images.all %}
+        <div class="image">
+          <img src="{{image.img.path}}" width="100%" height="350" /></td>
+        </div>
+        {% endfor %}
+        <table class="table1">
+          <td>
+            <img src="{% static 'images/photo.jpg' %}" width="300" alt="logo" />
+          </td>
+          <td>
+            <div class="list-group">
+              <br>
+              <h4>Ведущий специалист департамента недвижимости Максим:</h4>
+              <h4>Контактная информация:</h4>
+              <h6>+7-958-687-86-25</h6>
+              <h6>+7-926-404-99-97</h6>
+              <h6><small class="text-muted">flat.realty@yandex.ru</small></h6>
+            </div>
+          </td>
+        </table>
+        <div id="footer_content">
+          <pdf:pagenumber>
+        </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>
