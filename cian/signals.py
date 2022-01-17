@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model, user_logged_in
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files import File
@@ -7,10 +9,11 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 import urllib.request
-from .models import Url, Apartment, Image
+from .models import Url, Apartment, Image, Profile
 import json
 import time
 import random
+
 
 start_json_template = "window._cianConfig['frontend-offer-card'] = "
 
@@ -27,10 +30,29 @@ proxy = {
     'http': 'http://138.59.206.183:9915'
 }
 
+
+current_user = None
+
+@receiver(user_logged_in, sender=User)
+def user_logged_in(sender, request, user, **kwargs):
+    global current_user
+    current_user = user
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(
+            user=instance,
+            email = instance.email
+        )
+
+
 def save_data(apartments_list):  # save the scraped data to the database
     for ap in apartments_list:
         try:
             apartment = Apartment.objects.create(
+                owner=ap['owner'],
                 rooms=ap['rooms'],
                 price=ap['price'],
                 address=ap['address'],
@@ -62,6 +84,7 @@ def save_data(apartments_list):  # save the scraped data to the database
 def saved_url(instance, created, **kwargs):
     if created:
         url = instance.url
+        owner = current_user
         # soup = make_request(url)
         # for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
         #     url = link.find('a').get('href')
@@ -142,6 +165,7 @@ def saved_url(instance, created, **kwargs):
                             'floor': floor,
                             'photos': photos,
                             'commission': commission,
+                            'owner': owner,
                         }
                     )
                     save_data(apartments)

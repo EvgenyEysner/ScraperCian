@@ -2,24 +2,32 @@ import os
 from io import BytesIO
 
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views.generic import (DeleteView, DetailView, FormView, ListView,
                                   UpdateView)
+from django.contrib.auth.decorators import login_required
 from xhtml2pdf import pisa
 
 from .forms import ApartmentEditForm, ImageForm, UrlForm
-from .models import Apartment, Image
+from .models import Apartment, Image, Profile
 
 
-class IndexView(ListView, FormView):
+class IndexView(LoginRequiredMixin, ListView, FormView):
     model = Apartment
     template_name = 'cian/index.html'
     success_url = reverse_lazy('apartments:home')
-    context_object_name = 'apartments_list'
+    # context_object_name = 'apartments_list'
     form_class = UrlForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # добавляю в контекст только посты определенного пользователя
+        context['apartments_list'] = Apartment.objects.filter(owner=self.request.user.id)
+        return context
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -27,7 +35,7 @@ class IndexView(ListView, FormView):
         return super().form_valid(form)
 
 
-class ApartmentDetailView(DetailView):
+class ApartmentDetailView(LoginRequiredMixin, DetailView):
     model = Apartment
     template_name = 'cian/apartment.html'
     context_object_name = 'apartments'
@@ -39,27 +47,27 @@ class ApartmentDetailView(DetailView):
         return context
 
 
-class ApartmentDeleteView(DeleteView):
+class ApartmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Apartment
     templates = 'cian/apartment_confirm_delete.html'
     success_url = reverse_lazy('apartments:home')
 
 
-class ImageDeleteView(DeleteView):
+class ImageDeleteView(LoginRequiredMixin, DeleteView):
     model = Image
     templates = 'cian/image_confirm_delete.html'
     success_url = reverse_lazy('apartments:home')
     templates = 'cian/index.html'
 
 
-class ApartmentUpdateView(UpdateView):
+class ApartmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Apartment
     form_class = ApartmentEditForm
     success_url = reverse_lazy('apartments:home')
     template_name = 'cian/apartment_update.html'
 
 
-class ImageUpdateView(UpdateView):
+class ImageUpdateView(LoginRequiredMixin, UpdateView):
     model = Image
     form_class = ImageForm
     success_url = reverse_lazy('apartments:home')
@@ -93,13 +101,17 @@ def fetch_pdf_resources(uri, rel):
         )
     return path
 
-
+@login_required
 def apartments_render_pdf_view(request, *args, **kwargs):
     pk = kwargs.get('pk')
     apartment = get_object_or_404(Apartment, pk=pk)
+    user = Profile.objects.get(user=request.user.id)
 
     template_path = 'cian/report.html'
-    context = {'apartment': apartment}
+    context = {
+        'apartment': apartment,
+        'user': user,
+    }
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)

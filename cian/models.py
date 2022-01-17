@@ -1,15 +1,17 @@
 from django.db import models
+from django.contrib.auth.models import User
 from PIL import Image as Img
 from PIL import ImageDraw, ImageFont
 
 
 class Apartment(models.Model):
-    rooms = models.CharField('кол-во комнат', max_length=64, null=True)
-    price = models.CharField('цена', max_length=20, null=True, blank=True)
-    address = models.CharField('Адрес', max_length=256, null=True, blank=True)
-    desc = models.TextField('описание', null=True, blank=True)
-    floor = models.CharField('этаж', max_length=10, null=True, blank=True)
-    commission = models.CharField('коммисия', max_length=256, null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='владелец', null=True)
+    rooms = models.CharField('кол-во комнат', max_length=64, blank=True)
+    price = models.CharField('цена', max_length=20, blank=True)
+    address = models.CharField('Адрес', max_length=256, blank=True)
+    desc = models.TextField('описание', blank=True)
+    floor = models.CharField('этаж', max_length=10, blank=True)
+    commission = models.CharField('коммисия', max_length=256, blank=True)
 
     def __str__(self):
         return self.address
@@ -21,7 +23,7 @@ class Apartment(models.Model):
 
 class Image(models.Model):
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='images', null=True, blank=True)
-    img = models.ImageField(upload_to='image/', null=True, blank=True)
+    img = models.ImageField(upload_to='image/', blank=True)
 
     def save(self, *args, **kwargs):
         super().save()
@@ -66,6 +68,7 @@ class Image(models.Model):
 
 
 class Url(models.Model):
+    apartment = models.OneToOneField(Apartment, on_delete=models.CASCADE, related_name='urls', null=True)
     created = models.DateTimeField('Дата создания', auto_now_add=True)
     url = models.URLField('ссылка')
 
@@ -76,3 +79,20 @@ class Url(models.Model):
         verbose_name = 'ссылка'
         verbose_name_plural = 'ссылки'
         ordering = ['-created']
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField('имя', max_length=120, blank=True)
+    last_name = models.CharField('фамилия', max_length=240, blank=True)
+    phone_1 = models.CharField('телефон 1', max_length=18, blank=True)
+    phone_2 = models.CharField('телефон 2', max_length=18, blank=True)
+    avatar = models.ImageField('аватар', default='avatars/avatar.png', upload_to='avatars/%Y/%m/%d')
+    email = models.EmailField('email')
+
+    def __str__(self):
+        return "Профиль пользователя %s" % self.user
+
+    class Meta:
+        verbose_name = 'профиль'
+        verbose_name_plural = 'профили'

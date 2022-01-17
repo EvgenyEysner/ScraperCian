@@ -130,16 +130,16 @@
         {% endfor %}
         <table class="table1">
           <td>
-            <img src="{% static 'images/photo.jpg' %}" width="300" alt="logo" />
+            <img src="{{ user.avatar.path }}" width="300" alt="logo" />
           </td>
           <td>
             <div class="list-group">
               <br>
-              <h4>Ведущий специалист департамента недвижимости Максим:</h4>
+              <h4>Ведущий специалист департамента недвижимости {{user.first_name}} {{user.last_name}}:</h4>
               <h4>Контактная информация:</h4>
-              <h6>+7-958-687-86-25</h6>
-              <h6>+7-926-404-99-97</h6>
-              <h6><small class="text-muted">flat.realty@yandex.ru</small></h6>
+              <h6>{{ user.phone_1 }}</h6>
+              <h6>{{ user.phone_2 }}</h6>
+              <h6><small class="text-muted">{{ user.email }}</small></h6>
             </div>
           </td>
         </table>
