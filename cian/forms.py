@@ -1,5 +1,5 @@
 from django.forms import ModelForm, URLInput, HiddenInput, FloatField, FileInput
-from .models import Url, Apartment, Image
+from .models import Url, Apartment, Image, Profile
 from PIL import Image as Img
 
 
@@ -52,3 +52,9 @@ class ImageForm(ModelForm):
         resized_image.save(photo.img.path) # save resized image
 
         return resized_image
+
+
+class ProfileEditForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('avatar', 'first_name', 'last_name', 'email', 'phone_1', 'phone_2')

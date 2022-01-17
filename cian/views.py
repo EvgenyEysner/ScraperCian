@@ -12,7 +12,7 @@ from django.views.generic import (DeleteView, DetailView, FormView, ListView,
 from django.contrib.auth.decorators import login_required
 from xhtml2pdf import pisa
 
-from .forms import ApartmentEditForm, ImageForm, UrlForm
+from .forms import ApartmentEditForm, ImageForm, UrlForm, ProfileEditForm
 from .models import Apartment, Image, Profile
 
 
@@ -25,8 +25,8 @@ class IndexView(LoginRequiredMixin, ListView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # добавляю в контекст только посты определенного пользователя
         context['apartments_list'] = Apartment.objects.filter(owner=self.request.user.id)
+        context['profile'] = Profile.objects.get(user=self.request.user)
         return context
 
     def form_valid(self, form):
@@ -73,6 +73,23 @@ class ImageUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('apartments:home')
     template_name = 'cian/image_update.html'
     context_object_name = 'image'
+
+
+class UserProfile(LoginRequiredMixin, ListView):
+    model = Profile
+    template_name = 'cian/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = Profile.objects.get(user=self.request.user)
+        return context
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileEditForm
+    template_name = 'cian/edit.html'
+    success_url = reverse_lazy('apartments:profile')
 
 
 def fetch_pdf_resources(uri, rel):
