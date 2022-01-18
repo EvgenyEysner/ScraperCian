@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files import File
-from fake_headers import Headers
+from fake_useragent import UserAgent
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -17,18 +17,17 @@ import random
 
 start_json_template = "window._cianConfig['frontend-offer-card'] = "
 
-header = Headers(
-    # generate any browser & os headeers
-    headers=False  # don`t generate misc headers
-)
+ua = UserAgent()
 
-for i in range(10):
-    headers = header.generate()
-
-proxy = {
-    'https': 'http://138.59.206.183:9915',
-    'http': 'http://138.59.206.183:9915'
+headers = {
+    'User-Agent': ua.random,
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
 }
+
+# proxy = {
+#     'https': 'http://138.59.206.183:9915',
+#     'http': 'http://138.59.206.183:9915'
+# }
 
 
 current_user = None
@@ -94,7 +93,7 @@ def saved_url(instance, created, **kwargs):
         s.mount('http://', adapter)
         s.mount('https://', adapter)
 
-        response = s.get(url, headers=headers, proxies={'http': 'http://138.59.206.183:9915'}, timeout=random.randint(1, 3))
+        response = s.get(url, headers=headers, timeout=random.randint(1, 3)) # proxies={'http': 'http://138.59.206.183:9915'}
         html = response.text
         if start_json_template in html: # get json from website
             start = html.index(start_json_template) + len(start_json_template)
