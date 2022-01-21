@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+#  pip install django-currentuser
+# https://pypi.org/project/django-currentuser/
+from django_currentuser.middleware import get_current_authenticated_user
 from PIL import Image as Img
 from PIL import ImageDraw, ImageFont
 
@@ -12,6 +15,11 @@ class Apartment(models.Model):
     desc = models.TextField('описание', blank=True)
     floor = models.CharField('этаж', max_length=10, blank=True)
     commission = models.CharField('коммисия', max_length=256, blank=True)
+
+    def save(self, *args, **kwargs):  # переопределяю метод save  для получения текущего пользователя
+        # Hack to pass the user to signal.
+        self.owner = get_current_authenticated_user()
+        super(Apartment, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.address

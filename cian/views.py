@@ -136,7 +136,7 @@ def apartments_render_pdf_view(request, *args, **kwargs):
     # create a pdf
     pdf = pisa.pisaDocument(BytesIO(html.encode(
         'UTF-8')), result, encoding='UTF-8', link_callback=fetch_pdf_resources)
-    # apartment.delete() # remove object after file creation
+    apartment.delete() # remove object after file creation
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
 

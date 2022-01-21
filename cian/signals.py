@@ -1,4 +1,5 @@
-from django.contrib.auth import get_user_model, user_logged_in
+# from django.contrib.auth import get_user_model, user_logged_in
+from allauth.account.signals import user_logged_in
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -10,6 +11,7 @@ from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 import urllib.request
 from .models import Url, Apartment, Image, Profile
+# from .views import save_data
 import json
 import time
 import random
@@ -30,14 +32,6 @@ headers = {
 # }
 
 
-current_user = None
-
-@receiver(user_logged_in, sender=User)
-def user_logged_in(sender, request, user, **kwargs):
-    global current_user
-    current_user = user
-
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -51,7 +45,6 @@ def save_data(apartments_list):  # save the scraped data to the database
     for ap in apartments_list:
         try:
             apartment = Apartment.objects.create(
-                owner=ap['owner'],
                 rooms=ap['rooms'],
                 price=ap['price'],
                 address=ap['address'],
@@ -71,22 +64,11 @@ def save_data(apartments_list):  # save the scraped data to the database
             break
 
 
-# make request
-# def make_request(url):
-#     req = requests.get(url, headers=headers, timeout=3, stream=True)
-#     src = req.text
-#     soup = BeautifulSoup(src, 'lxml')
-#     return soup
-
-
 @receiver(post_save, sender=Url)
 def saved_url(instance, created, **kwargs):
     if created:
         url = instance.url
-        owner = current_user
-        # soup = make_request(url)
-        # for link in soup.find_all('div', attrs={'data-name': 'LinkArea'}):
-        #     url = link.find('a').get('href')
+
         s = requests.Session()
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -164,9 +146,9 @@ def saved_url(instance, created, **kwargs):
                             'floor': floor,
                             'photos': photos,
                             'commission': commission,
-                            'owner': owner,
                         }
                     )
                     save_data(apartments)
+                    instance.delete()
 
 
