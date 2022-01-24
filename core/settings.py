@@ -151,3 +151,40 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'error.log'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'WARNING',
+            'handlers': ['file'],
+            'propagate': True
+        },
+        'django.request': {
+            'level': 'ERROR',
+            'handlers': ['file']
+        },
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['file']
+        },
+        'django.security.*': {
+            'level': 'ERROR',
+            'handlers': ['file']
+        }
+    }
+}

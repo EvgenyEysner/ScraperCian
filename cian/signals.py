@@ -11,7 +11,8 @@ from requests.packages.urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 import urllib.request
 from .models import Url, Apartment, Image, Profile
-# from .views import save_data
+import asyncio
+import aiohttp
 import json
 import time
 import random
