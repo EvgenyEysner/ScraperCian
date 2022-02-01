@@ -1,5 +1,3 @@
-# from django.contrib.auth import get_user_model, user_logged_in
-from allauth.account.signals import user_logged_in
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,11 +6,8 @@ from fake_useragent import UserAgent
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from bs4 import BeautifulSoup
 import urllib.request
 from .models import Url, Apartment, Image, Profile
-import asyncio
-import aiohttp
 import json
 import time
 import random
@@ -27,10 +22,11 @@ headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
 }
 
-# proxy = {
-#     'https': 'http://138.59.206.183:9915',
-#     'http': 'http://138.59.206.183:9915'
-# }
+proxy = {
+
+     'https': 'http://186.65.114.25:9898',
+     'http': 'http://186.65.114.25:9898'
+}
 
 
 @receiver(post_save, sender=User)
@@ -71,13 +67,15 @@ def saved_url(instance, created, **kwargs):
         url = instance.url
 
         s = requests.Session()
+
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
         s.mount('http://', adapter)
         s.mount('https://', adapter)
 
-        response = s.get(url, headers=headers, timeout=random.randint(1, 3)) # proxies={'http': 'http://138.59.206.183:9915'}
+        response = s.get(url, headers=headers, proxies=proxy, timeout=random.randint(1, 5)) # proxies={'http': 'http://138.59.206.183:9915'}
         html = response.text
+        # time.sleep(random.randint(1, 4))
         if start_json_template in html: # get json from website
             start = html.index(start_json_template) + len(start_json_template)
             end = html.index('</script>', start)
