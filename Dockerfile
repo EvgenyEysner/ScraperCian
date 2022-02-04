@@ -1,16 +1,16 @@
+  GNU nano 4.8                                                                              Dockerfile
 # pull official base image
 FROM python:3.8
 
 # create directory
-RUN mkdir -p /home/evgeny/www/scraper
-RUN mkdir -p /home/evgeny/www/scraper/media
-RUN mkdir -p /home/evgeny/www/scraper/static
+RUN mkdir -p /home/www/scraper
+RUN mkdir -p /home/www/scraper/media
 
 # set work directory
-WORKDIR /home/evgeny/www/scraper
+WORKDIR /home/www/scraper
 
 # copy project
-COPY . /home/evgeny/www/scraper
+COPY . /home/www/scraper
 
 # install dependencies
 RUN pip install --upgrade pip setuptools wheel
@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 #RUN mkdir /db
 #RUN /usr/bin/sqlite3
 
-EXPOSE 8000
+# EXPOSE 8000
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
