@@ -1,10 +1,9 @@
-  GNU nano 4.8                                                                              Dockerfile
 # pull official base image
 FROM python:3.8
 
 # create directory
 RUN mkdir -p /home/www/scraper
-RUN mkdir -p /home/www/scraper/media
+# RUN mkdir -p /home/www/scraper/media
 
 # set work directory
 WORKDIR /home/www/scraper
@@ -19,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 #RUN apt-get -y upgrade
 #RUN apt-get install -y sqlite3 libsqlite3-dev
 #RUN mkdir /db
-#RUN /usr/bin/sqlite3
+RUN chmod a+x ./entrypoint.sh
 
 # EXPOSE 8000
 
@@ -28,5 +27,5 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV VIRTUAL_ENV /venv
 ENV PATH /venv/bin:$PATH
-
+# ENTRYPOINT ["entrypoint.sh"]
 CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "core.wsgi", "--reload"]
